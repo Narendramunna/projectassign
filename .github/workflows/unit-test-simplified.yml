@@ -14,7 +14,7 @@ jobs:
     env:
       DOCKER_IMAGE_NAME: test
       DOCKER_IMAGE_TAG: latest
-      SCRIPT_PATH: /run-unit-tests.sh
+      SCRIPT_PATH: run-unit-tests.sh
       DOCKER_FILE_LOC: docker/Dockerfile-test
 
     steps:
