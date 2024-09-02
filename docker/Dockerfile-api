@@ -1,0 +1,16 @@
+FROM python:3.12
+
+# Set the container name
+LABEL com.example.container-name="housing-api"
+
+# Create a directory for the application
+WORKDIR /application
+
+# Copy the application code
+COPY ../ .
+
+VOLUME ["../:/application", "/application/.venv"]
+
+EXPOSE 3003
+
+ENTRYPOINT ["..//application/start-local.sh"]

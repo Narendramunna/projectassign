@@ -1,0 +1,13 @@
+# Dockerfile-migration
+
+FROM flyway/flyway:10
+
+# Copy the migration scripts into the image
+COPY ../db/migrations /flyway/sql
+
+VOLUME ["../db/migrations:/flyway/sql:ro"]
+
+# Run the Flyway command
+CMD ["info", "migrate", "info"]
+
+

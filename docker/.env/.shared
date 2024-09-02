@@ -1,0 +1,4 @@
+## ENVS
+POSTGRES_PASSWORD=default
+POSTGRES_USER=postgres
+POSTGRES_DATABASE=postgres

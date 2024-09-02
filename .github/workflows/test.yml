@@ -1,0 +1,72 @@
+name: Build Docker Image
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  # Define default values for variables
+  DOCKERFILE_NAME: Dockerfile
+  UNIT_TEST_SCRIPT: /application/run-unit-tests.sh
+  DOCKER_REGISTRY: ghcr.io
+  IMAGE_NAME: test-image
+  IMAGE_TAG: latest
+
+jobs:
+  test-amd64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: linux/amd64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker Container (amd64)
+        run: docker build --platform linux/amd64 -t ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/$IMAGE_NAME:${{ env.IMAGE_TAG }} -f ${{ env.DOCKERFILE_NAME }} .
+
+      - name: Start Container and Run Tests (amd64)
+        run: docker run --rm ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/$IMAGE_NAME:${{ env.IMAGE_TAG }} ${{ env.UNIT_TEST_SCRIPT }}
+
+  test-arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        with:
+          platforms: linux/arm64
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker Container (arm64)
+        run: docker build --platform linux/arm64 -t ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/$IMAGE_NAME:${{ env.IMAGE_TAG }} -f ${{ env.DOCKERFILE_NAME }} .
+
+      - name: Start Container and Run Tests (arm64)
+        run: docker run --rm ${{ env.DOCKER_REGISTRY }}/${{ github.repository }}/$IMAGE_NAME:${{ env.IMAGE_TAG }} ${{ env.UNIT_TEST_SCRIPT }}

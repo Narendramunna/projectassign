@@ -1,0 +1,13 @@
+# Use Python 3.12 as the base image
+FROM python:3.12
+
+# Set the working directory in the container
+WORKDIR /application
+
+VOLUME ["../:/application", "/application/.venv"]
+
+# Copy the current directory contents into the container at /application
+COPY ../ /application
+
+# Set the entrypoint for the container to run unit tests
+ENTRYPOINT ["/application/run-unit-tests.sh"]
